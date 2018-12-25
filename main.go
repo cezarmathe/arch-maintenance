@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/cezarmathe/arch-maintenance/config"
-	// log "github.com/cezarmathe/arch-maintenance/logging"
+	log "github.com/cezarmathe/arch-maintenance/logging"
 )
 
 func main() {
@@ -16,6 +16,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("%+v", config.Config)
+	log.Loggers["config"].Info("test")
 
 }

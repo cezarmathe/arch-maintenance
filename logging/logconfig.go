@@ -1,17 +1,24 @@
 package logging
 
-type configLogger struct{}
+import "github.com/sirupsen/logrus"
 
-func (c *configLogger) Trace() {}
+type configLogger struct {
+	log *logrus.Entry
+}
 
-func (c *configLogger) Debug() {}
+func newConfigLogger() *configLogger {
+	return &configLogger{
+		log: logger.WithFields(logrus.Fields{
+			"Component": "CONFIG",
+		}),
+	}
+}
 
-func (c *configLogger) Info() {}
+func (c *configLogger) Exist() {}
 
-func (c *configLogger) Warn() {}
-
-func (c *configLogger) Error() {}
-
-func (c *configLogger) Fatal() {}
-
-func (c *configLogger) Panic() {}
+func (c *configLogger) ConfigFileLoadStatus(filepath string, status bool) {
+	log.WithFields(logrus.Fields{
+		"filepath": filepath,
+		"status":   status,
+	}).Info("Load config from file")
+}

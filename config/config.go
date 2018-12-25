@@ -4,7 +4,19 @@ import (
 	"errors"
 	"os"
 
+	"github.com/cezarmathe/arch-maintenance/logging"
 	"github.com/pelletier/go-toml"
+)
+
+var (
+	// paths for loading the config
+	configPaths = [...]string{"", "/etc/arch-maintenance.toml", "/home/cezar/Projects/Go/src/github.com/cezarmathe/arch-maintenance/config/config.toml"}
+
+	// Config contains the configuration
+	Config config
+
+	// The logger
+	logger *logging.Logger
 )
 
 // Config is a simple container for the needed variables for running the maintenance
@@ -69,14 +81,6 @@ type config struct {
 	// Report struct {} `toml:"report"`
 }
 
-var (
-	// paths for loading the config
-	configPaths = [...]string{"", "/etc/arch-maintenance.toml", "/home/cezar/Projects/Go/src/github.com/cezarmathe/arch-maintenance/config/config.toml"}
-
-	// Config contains the configuration
-	Config config
-)
-
 // Load the XDG_CONFIG_DIR path if possible, otherwise use the default ~/.config
 func init() {
 	xdgConfigDir := os.Getenv("XDG_CONFIG_DIR")
@@ -99,7 +103,12 @@ func LoadConfig() error {
 		} else if i == len(configPaths)-1 {
 			return errors.New("The package is corrupt. The config file was not found in /etc")
 		} else {
+
 		}
 	}
 	return nil
+}
+
+func SetLogger(newLogger *logging.Logger) {
+	logger = newLogger
 }

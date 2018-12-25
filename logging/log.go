@@ -3,30 +3,33 @@ package logging
 import (
 	"os"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 var (
-// logger = log.New()
+	// the logger
+	logger *logrus.Logger
+
+	// Loggers is a map that contains loggers for each component
+	// Loggers map[string]*logrus.Entry
+	Loggers map[string]Logger
 )
 
 func init() {
-	log.SetReportCaller(true)
+	Loggers = make(map[string]Logger)
 
-	log.SetFormatter(&log.TextFormatter{
-		DisableColors: false,
-		FullTimestamp: true,
-	})
+	logger = &logrus.Logger{
+		Formatter:    &logrus.TextFormatter{FullTimestamp: true},
+		Level:        logrus.TraceLevel,
+		Out:          os.Stdout,
+		ReportCaller: false,
+	}
 
-	log.SetOutput(os.Stdout)
+	// populating the loggers for each component
+	Loggers["config"] = newConfigLogger()
 }
 
+// Logger defines the functions that every logger should implement
 type Logger interface {
-	Trace()
-	Debug()
-	Info()
-	Warn()
-	Error()
-	Fatal()
-	Panic()
+	Exist()
 }
