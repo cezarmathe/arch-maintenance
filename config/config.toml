@@ -1,0 +1,57 @@
+# This is a sample configuration file for arch-maintenance
+
+[backup]
+  [backup.dotfiles]
+  path = "path_to_dotfiles"
+  remote = "remote_url"
+  commit_message = "a message"
+
+  # [backup.etc]
+  # todo
+
+  [backup.packages]
+  formats = ["native", "native_extended", "foreign"]
+  backup_path = "path_where_backups_are_stored"
+  remote = "remote_url"
+  commit_message = "a message"
+  archive = false
+
+[update]
+  [update.mirrors]
+  countries = ["Romania", "Germany", "France"]
+  mirror_count = 10
+  age_or_count = false # True sorts by age(latest x synchronized mirrors), false sorts by latest x synchronized mirrors
+  protocol = "https"
+  save = true
+
+  [update.packages]
+  native = true
+  aur = true
+  # Uncomment these if you use an aur helper diffrent than yay
+  # aur_helper = "yay"
+  # aur_helper_args = "-a -b -c arg"
+  # Comment these if you use an aur helper diffrent than yay
+    [update.packages.yay]
+    show_diffs = false
+    clean_build = true
+    edit_pkgbuild = false
+    upgrade = true
+
+
+[maintenance]
+  [maintenance.systemd]
+  check_failed = true
+
+  [maintenance.symlinks]
+  fix = true
+
+  [maintenance.pacman]
+  remove_orphans = true
+
+  [maintenance.cache]
+  delete_pacman_cache = true
+  user_caches = ["/home/username/.cache", "/home/usernamex/.cache"]
+
+# [report]
+# todo
+
