@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/cezarmathe/arch-maintenance/config"
+	// log "github.com/cezarmathe/arch-maintenance/logging"
 )
 
 func main() {
@@ -16,4 +17,5 @@ func main() {
 	}
 
 	fmt.Printf("%+v", config.Config)
+
 }

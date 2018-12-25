@@ -77,6 +77,7 @@ var (
 	Config config
 )
 
+// Load the XDG_CONFIG_DIR path if possible, otherwise use the default ~/.config
 func init() {
 	xdgConfigDir := os.Getenv("XDG_CONFIG_DIR")
 	if xdgConfigDir != "" {
