@@ -1,22 +1,21 @@
 package config
 
 import (
-	"errors"
 	"os"
 
-	"github.com/cezarmathe/arch-maintenance/logging"
+	"github.com/sirupsen/logrus"
 	"github.com/pelletier/go-toml"
 )
 
 var (
 	// paths for loading the config
-	configPaths = [...]string{"", "/etc/arch-maintenance.toml", "/home/cezar/Projects/Go/src/github.com/cezarmathe/arch-maintenance/config/config.toml"}
+	configPaths = [...]string{"", "/etc/arch-maintenance.toml", "/home/cezar/Projects/Go/src/github.com/cezarmathe/arch-maintenance/config/config_example.toml"}
 
 	// Config contains the configuration
 	Config config
 
 	// The logger
-	logger *logging.Logger
+	configLogger *logrus.Entry
 )
 
 // Config is a simple container for the needed variables for running the maintenance
@@ -40,7 +39,7 @@ type config struct {
 
 	Update struct {
 		Mirrors struct {
-			countries   []string `toml:"countries"`
+			Countries   []string `toml:"countries"`
 			MirrorCount int      `toml:"mirror_count"`
 			AgeOrCount  bool     `toml:"age_or_count"`
 			Protocol    string   `toml:"protocol"`
@@ -93,22 +92,28 @@ func init() {
 
 // LoadConfig loads the configuration from the system and reports an error
 // if there is one
-func LoadConfig() error {
+func LoadConfig() {
+	configLogger.Info("loading the configuration")
 	for i := 0; i < len(configPaths); i++ {
+		configLogger.Debug("trying to load the configuration from \"" + configPaths[i] +"\"")
 		configFile, err := os.Open(configPaths[i])
 		if err == nil {
+			configLogger.Debug("opened the configuration file from \"" + configPaths[i] + "\"")
 			tomlDecoder := toml.NewDecoder(configFile)
-			tomlDecoder.Decode(&Config)
-			break
+			err = tomlDecoder.Decode(&Config)
+			if err != nil {
+				configLogger.Warn(err)
+			}
+			configLogger.Info("loaded the configuration from \"" +configPaths[i] + "\"")
+			return
 		} else if i == len(configPaths)-1 {
-			return errors.New("The package is corrupt. The config file was not found in /etc")
+			configLogger.Fatal("no configuration file found")
 		} else {
-
+			configLogger.Warn(err)
 		}
 	}
-	return nil
 }
 
-func SetLogger(newLogger *logging.Logger) {
-	logger = newLogger
+func SetLogger(newLogger *logrus.Entry) {
+	configLogger = newLogger
 }

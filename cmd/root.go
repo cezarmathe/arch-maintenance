@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	homedir "github.com/mitchellh/go-homedir"
+	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	// "github.com/spf13/viper"
 )
@@ -31,7 +31,7 @@ type Config struct {
 }
 
 var (
-	version string = "v0.1.0"
+	version = "v0.1.0"
 
 	AppConfig Config
 

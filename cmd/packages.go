@@ -36,7 +36,7 @@ func PackagesCmd(cmd *cobra.Command, args []string) {
 		if Native {
 			cmdNative := exec.Command("pacman", "-Qent", ">", AppConfig.Packages.Native)
 			err1 := cmdNative.Run()
-			if err1 != null {
+			if err1 != nil {
 				os.Stderr.WriteString(err1.Error())
 				panic(err1)
 			}

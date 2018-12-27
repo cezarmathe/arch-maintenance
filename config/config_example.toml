@@ -1,4 +1,4 @@
-# This is a sample configuration file for arch-maintenance
+#arch-maintenance configuration file
 
 [backup]
   [backup.dotfiles]
