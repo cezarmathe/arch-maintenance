@@ -3,8 +3,8 @@ package config
 import (
 	"os"
 
-	"github.com/sirupsen/logrus"
 	"github.com/pelletier/go-toml"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -15,7 +15,7 @@ var (
 	Config config
 
 	// The logger
-	configLogger *logrus.Entry
+	log *logrus.Entry
 )
 
 // Config is a simple container for the needed variables for running the maintenance
@@ -58,7 +58,7 @@ type config struct {
 		} `toml:"packages"`
 	} `toml:"update"`
 
-	Maintenance struct {
+	System struct {
 		Systemd struct {
 			CheckFailed bool `toml:"check_failed"`
 		} `toml:"systemd"`
@@ -82,6 +82,22 @@ type config struct {
 
 // Load the XDG_CONFIG_DIR path if possible, otherwise use the default ~/.config
 func init() {
+	if os.Getenv("DEBUG") == "true" {
+		log = (&logrus.Logger{
+			Formatter:    &logrus.TextFormatter{FullTimestamp: true},
+			Level: logrus.DebugLevel ,
+			Out:          os.Stdout,
+			ReportCaller: false,
+		}).WithField("Component", "CONFIG")
+	} else {
+		log = (&logrus.Logger{
+			Formatter:    &logrus.TextFormatter{FullTimestamp: true},
+			Level: logrus.InfoLevel ,
+			Out:          os.Stdout,
+			ReportCaller: false,
+		}).WithField("Component", "CONFIG")
+	}
+	
 	xdgConfigDir := os.Getenv("XDG_CONFIG_DIR")
 	if xdgConfigDir != "" {
 		configPaths[0] = xdgConfigDir + "arch-maintenance.toml"
@@ -93,27 +109,23 @@ func init() {
 // LoadConfig loads the configuration from the system and reports an error
 // if there is one
 func LoadConfig() {
-	configLogger.Info("loading the configuration")
+	log.Info("loading the configuration")
 	for i := 0; i < len(configPaths); i++ {
-		configLogger.Debug("trying to load the configuration from \"" + configPaths[i] +"\"")
+		log.Debug("trying to load the configuration from \"" + configPaths[i] + "\"")
 		configFile, err := os.Open(configPaths[i])
 		if err == nil {
-			configLogger.Debug("opened the configuration file from \"" + configPaths[i] + "\"")
+			log.Debug("opened the configuration file from \"" + configPaths[i] + "\"")
 			tomlDecoder := toml.NewDecoder(configFile)
 			err = tomlDecoder.Decode(&Config)
 			if err != nil {
-				configLogger.Warn(err)
+				log.Warn(err)
 			}
-			configLogger.Info("loaded the configuration from \"" +configPaths[i] + "\"")
+			log.Info("loaded the configuration from \"" + configPaths[i] + "\"")
 			return
 		} else if i == len(configPaths)-1 {
-			configLogger.Fatal("no configuration file found")
+			log.Fatal("no configuration file found")
 		} else {
-			configLogger.Warn(err)
+			log.Warn(err)
 		}
 	}
-}
-
-func SetLogger(newLogger *logrus.Entry) {
-	configLogger = newLogger
 }

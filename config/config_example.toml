@@ -38,17 +38,17 @@
     upgrade = true
 
 
-[maintenance]
-  [maintenance.systemd]
+[system]
+  [system.systemd]
   check_failed = true
 
-  [maintenance.symlinks]
+  [system.symlinks]
   fix = true
 
-  [maintenance.pacman]
+  [system.pacman]
   remove_orphans = true
 
-  [maintenance.cache]
+  [system.cache]
   delete_pacman_cache = true
   user_caches = ["/home/username/.cache", "/home/usernamex/.cache"]
 
